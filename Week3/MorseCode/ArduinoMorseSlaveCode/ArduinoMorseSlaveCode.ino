@@ -16,6 +16,8 @@ void loop()
 }
 void receiveEvent(int bytes)
 {
+    Serial.print("Number of bytes recieved:");
+    Serial.println(bytes);
     message = "";
     while (Wire.available())
     {                         // loop whilst bus is busy
@@ -34,6 +36,4 @@ void receiveEvent(int bytes)
     char output[200] = {0};
     convertToText(messageString, output); // run conversion function
     Serial.println(output); // print output in text
-    Serial.print("Number of bytes used:");
-    Serial.println(bytes);
 }
