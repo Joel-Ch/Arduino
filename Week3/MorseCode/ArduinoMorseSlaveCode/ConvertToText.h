@@ -7,21 +7,21 @@ char convertToText(char morsePhrase[], char Phrase[])
     char morse[36][7] = {".-", "-...", "-.-.", "-..", ".", "..-", "--.", "....", "..", ".---", "-.-", ".-..", "--", "-.", "---", ".--.", "--.-", ".-.", "...", "-", "..-", "...-", ".--", "-..-", "-.--", "--..", ".----", "..---", "...--", "....-", ".....", "-....", "--....", "---..", "----.", "-----"};
 
     char *morseWord = strtok(morsePhrase, "/");
-    /* walk through other tokens */
+    //checks for the next slash and splits the string before it, to enable checking of individual letters
     while (morseWord != NULL)
     {
         for (int counter = 0; counter < 36; counter++)
-        {
+        {//go through each letter and see if its equal
             if (strcmp(morseWord, morse[counter]) == 0)
-            {
+            {//if equal add it to the end of "Phrase"
                 char letter[2];
                 letter[0] = text[counter];
                 letter[1] = '\0';
-
+                // converting from part of an array to a full string (adding a null character)
                 strcat(Phrase, letter);
             }
         }
         morseWord = strtok(NULL, "/");
+        // checks for the next slash to select the next word in the message
     }
-    return (Phrase[500]);
 }

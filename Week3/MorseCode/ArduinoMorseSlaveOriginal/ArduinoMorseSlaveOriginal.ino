@@ -1,7 +1,5 @@
 #include <Wire.h> // include Wire library
 #include <Arduino.h>
-#include "ConvertToText.h"
-#include <string.h>
 String message;
 void setup()
 {
@@ -12,7 +10,6 @@ void setup()
 }
 void loop()
 {
-
 }
 void receiveEvent(int bytes)
 {
@@ -22,18 +19,8 @@ void receiveEvent(int bytes)
         char c = Wire.read(); // receive data byte by byte
         message += c;         // form complete string
     }
-
-    int messageLength = message.length();
-    char messageString[messageLength+1];
-    strcpy(messageString, message.c_str());
-
-    Serial.println(messageString); // print morse code
-    
+    Serial.println(message); // write string to serial monitor
     delay(500);
-    
-    char output[200] = {0};
-    convertToText(messageString, output); // run conversion function
-    Serial.println(output); // print output in text
     Serial.print("Number of bytes used:");
     Serial.println(bytes);
 }

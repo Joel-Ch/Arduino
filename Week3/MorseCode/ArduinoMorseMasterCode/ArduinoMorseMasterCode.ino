@@ -8,7 +8,7 @@ void setup()
 void loop()
 {
     Wire.beginTransmission(0x08); // transmit to slave device address 8
-    Wire.write("...././.-../.-../---"); // send five bytes, one for each character
+    Wire.write("..../../-/...././.-./."); // send five bytes, one for each character
     Wire.endTransmission();       // end transmission
     Serial.print("sent message!");
     delay(1000);
