@@ -36,18 +36,18 @@ void loop()
     // output distance to the serial monitor                    
     Serial.print("Distance(m): ");
     Serial.println(distance);
-    }
+  }
 
-    if (newPosition2 != oldPosition2)
-    {
-      oldPosition2 = newPosition2;
+  if (newPosition2 != oldPosition2)
+  {
+    oldPosition2 = newPosition2;
 
-      // edit the code below to calculate the distance moved, +1 increment = (diameter*pi)/encoder count per revolution
-      distance2 = newPosition2 * 1.0;
-      // ***
+    // edit the code below to calculate the distance moved, +1 increment = (diameter*pi)/encoder count per revolution
+    distance2 = newPosition2 * 1.0;
+    // ***
 
-      // output distance to the serial monitor
-      Serial.print("Distance2(m): ");
-      Serial.println(distance2);
-    }
+    // output distance to the serial monitor
+    Serial.print("Distance2(m): ");
+    Serial.println(distance2);
+  }
 }
