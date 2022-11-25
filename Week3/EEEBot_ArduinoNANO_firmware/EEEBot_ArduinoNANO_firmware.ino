@@ -34,8 +34,8 @@ long oldPos_enc2 = -999;
 #define enB 6   // EnableB command line - should be a PWM pin
 
 // name the motor control pins - replace the ** with your pin number, digital pins do not need the 'D' prefix whereas analogue pins need the 'A' prefix
-#define INa A0  // Channel A direction 
-#define INb A1  // Channel A direction 
+#define INb A0  // Channel A direction 
+#define INa A1  // Channel A direction 
 #define INc A2  // Channel B direction 
 #define INd A3  // Channel B direction 
 
@@ -76,8 +76,8 @@ void loop() {
 // this function executes when data is requested from the master device
 void requestEvent(void)
 {
-  Wire.write(enc1_count);
-  Wire.write(enc2_count);
+  Wire.write(oldPos_enc1);
+  Wire.write(oldPos_enc2);
 }
 
 // this function executes whenever data is received from the master device
@@ -132,7 +132,7 @@ void emptyBuffer(void)
 
 // function to set the steering angle
 void setSteeringAngle(int servoAngle){
-  servoAngle = constrain(servoAngle, 0, 180); // prevents the servo being set to 'impossible' angles
+  servoAngle = constrain(servoAngle, 50, 130); // prevents the servo being set to 'impossible' angles
   myservo.write(servoAngle);
 }
 

@@ -49,38 +49,38 @@ void loop() {
   int slowSpeedLeft = 200;
   moveSteering();
   delay(500);
-  goForwards(speedLeft, speedRight);
-  delay(100);
-  delay(3000);
-  stopMotors(speedLeft, speedRight);
-  delay(500);
-  goBackwards(speedLeft, speedRight);
-  delay(3000);
-  stopMotors(speedLeft, speedRight);
-  delay(500);
-  goClockwise(speedLeft, slowSpeedRight);
-  delay(3000);
-  stopMotors(speedLeft, speedRight);
-  delay(500);
-  goAntiClockwise(slowSpeedLeft, speedRight);
-  delay(3000);
-  stopMotors(speedLeft, speedRight);
-  delay(500);
-  goBackAntiClockwise(speedLeft, slowSpeedRight);
-  delay(3000);
-  stopMotors(speedLeft, speedRight);
-  delay(500);
-  goBackClockwise(slowSpeedLeft, speedRight);
-  delay(3000);
-  stopMotors(speedLeft, speedRight);
-  delay(500);
-  goClockwise(speedLeft, slowSpeedRight);
-  delay(3900);
-  goAntiClockwise(slowSpeedLeft, speedRight);
-  delay(3900);
-  AnalogDriveB(speedLeft, speedRight);
-  delay(500);
-  stopMotors(speedLeft, speedRight);
+  // goForwards(speedLeft, speedRight);
+  // delay(100);
+  // delay(3000);
+  // stopMotors(speedLeft, speedRight);
+  // delay(500);
+  // goBackwards(speedLeft, speedRight);
+  // delay(3000);
+  // stopMotors(speedLeft, speedRight);
+  // delay(500);
+  // goClockwise(speedLeft, slowSpeedRight);
+  // delay(3000);
+  // stopMotors(speedLeft, speedRight);
+  // delay(500);
+  // goAntiClockwise(slowSpeedLeft, speedRight);
+  // delay(3000);
+  // stopMotors(speedLeft, speedRight);
+  // delay(500);
+  // goBackAntiClockwise(speedLeft, slowSpeedRight);
+  // delay(3000);
+  // stopMotors(speedLeft, speedRight);
+  // delay(500);
+  // goBackClockwise(slowSpeedLeft, speedRight);
+  // delay(3000);
+  // stopMotors(speedLeft, speedRight);
+  // delay(500);
+  // goClockwise(speedLeft, slowSpeedRight);
+  // delay(3900);
+  // goAntiClockwise(slowSpeedLeft, speedRight);
+  // delay(3900);
+  // AnalogDriveB(speedLeft, speedRight);
+  // delay(500);
+  // stopMotors(speedLeft, speedRight);
 }
 
 void motors(int leftSpeed, int rightSpeed) {
@@ -93,8 +93,8 @@ void motors(int leftSpeed, int rightSpeed) {
 
 void moveSteering() {
   //you may need to change the maximum and minimum servo angle to have the largest steering motion
-  int maxAngle = 90;
-  int minAngle = 0;
+  int maxAngle = 130;
+  int minAngle = 50;
   myservo.write(0);
   for (steeringAngle = minAngle; steeringAngle <= maxAngle; steeringAngle += 1) { //goes from minAngle to maxAngle (degrees)
     //in steps of 1 degree

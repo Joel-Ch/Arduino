@@ -29,7 +29,7 @@ void loop()
 }
 
 // this function executes whenever data is received from master device
-void receiveEvent(uint16_t howMany)
+void receiveEvent(int howMany)
 {
   if(howMany != 4)  // for 2 16-bit numbers, the data will be 4 bytes long - anything else is an error
   {
