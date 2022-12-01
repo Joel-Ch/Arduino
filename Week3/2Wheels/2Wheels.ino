@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "ArduinoComms.h"
-
+#include <math.h>
 #include <Wire.h>
 
 const int MPU_addr = 0x68;
@@ -12,6 +12,8 @@ int maxVal = 402;
 double x;
 double y;
 double z;
+
+int speed;
 
 void setup()
 {
@@ -37,54 +39,34 @@ void loop()
     int zAng = map(AcZ, minVal, maxVal, -90, 90);
 
     x = RAD_TO_DEG * (atan2(-yAng, -zAng) + PI);
-    // y = RAD_TO_DEG * (atan2(-xAng, -zAng) + PI);
-    // z = RAD_TO_DEG * (atan2(-yAng, -xAng) + PI);
+    y = RAD_TO_DEG * (atan2(-xAng, -zAng) + PI);
+    z = RAD_TO_DEG * (atan2(-yAng, -xAng) + PI);
 
     Serial.print("AngleX= ");
     Serial.println(x);
-    // Serial.print("AngleY= ");
-    // Serial.println(y);
-    // Serial.print("AngleZ= ");
-    // Serial.println(z);
+    Serial.print("AngleY= ");
+    Serial.println(y);
+    Serial.print("AngleZ= ");
+    Serial.println(z);
 
-    // Serial.println("-----------------------------------------");
+    Serial.println("-----------------------------------------");
 
     int xint = (int)x;
     Serial.print("  ");
     Serial.print(xint);
 
-    if (xint < 62)
+    if (xint < 82)
     {
-        Serial.println("collapsing forwards");
-        SetArduino(125, 125, 90);
+        speed = -pow(5, (82-xint));
+        Serial.print("Forwards");
     }
-    else if (xint < 72)
-    {
-        Serial.println("falling forwards");
-        SetArduino(100, 100, 90);
-    }
-    else if (xint < 82)
-    {
-        Serial.println("tipping forwards");
-        SetArduino(75, 75, 90);
-    }
-    else if (xint < 87)
-    {
-        Serial.println("tipping backwards");
-        SetArduino(-75, -75, 90);
-    }
-    else if (xint < 97)
-    {
-        Serial.println("falling backwards");
-        SetArduino(-100, -100, 90);
-    }
-    else if (xint < 107)
-    {
-        Serial.println("collapsing backwards");
-        SetArduino(-125, -125, 90);
-    }
-    
-    
 
-    delay(40);
+    else if (xint > 82)
+    {
+        speed = (pow(5, (xint-82)));
+        Serial.print("Backwards");
+    }
+    SetArduino(speed, speed, 90);
+
+    delay(400);
 }

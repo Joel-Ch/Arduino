@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include "ArduinoComms.h"
-#include "ReadSensors.h"
-#include <MPU6500_WE.h>
+#include <MPU6050_tockn.h>
 
-#define MPU6500_ADDR 0x68
+MPU6050 mpu6050(Wire);
+
 #define TRIGGER_PIN 32
 #define ECHO_PIN 33
 
@@ -11,7 +11,25 @@
 // That would be fine
 
 // Global variables!!!!
-int rightEncoderPos, leftEncoderPos, leftSpeed, rightSpeed, servoAngle = 90, distance;
+int rightEncoderPos, leftEncoderPos, leftSpeed, rightSpeed, servoAngle = 90, distance, angleOffset, angle;
+
+float CalculateDistance()
+{
+    digitalWrite(TRIGGER_PIN, LOW);
+    delayMicroseconds(2);
+    // Sets the trigPin on HIGH state for 10 micro seconds
+    digitalWrite(TRIGGER_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIGGER_PIN, LOW);
+    // Reads the echoPin, returns the sound wave travel time in microseconds
+    long duration = pulseIn(ECHO_PIN, HIGH);
+    // Calculate the distance
+    float distance = duration * 0.034 / 2;
+    Serial.print(distance);
+    delay(500);
+
+    return distance;
+}
 
 void EndingA()
 {
@@ -88,20 +106,12 @@ void EndingB()
 
 void setup()
 {
-    HCSR04.begin(TRIGGER_PIN, ECHO_PIN);
     Wire.begin();
     Serial.begin(9600);     // Starts the serial communication
     pinMode(TRIGGER_PIN, OUTPUT); // Sets the trigPin as an Output
     pinMode(ECHO_PIN, INPUT);  // Sets the echoPin as an Input
-    if (!myMPU6500.init())
-    {
-        Serial.println("MPU6500 does not respond");
-    }
-    else
-    {
-        Serial.println("MPU6500 is connected");
-    }
-    CalibrateGyro();
+    mpu6050.begin();
+    mpu6050.calcGyroOffsets(true);
 }
 
 void loop()
@@ -113,16 +123,16 @@ void loop()
     SetArduino(rightSpeed, leftSpeed, servoAngle);//then stop
 
     // turn 180 degrees
-    SetArduino(150, 200, 110);
-    delay(1000);
-    SetArduino(-200, -150, 70);
-    delay(1000);
-    SetArduino(150, 200, 110);
-    delay(1000);
-    SetArduino(-200, -150, 70);
-    delay(1000);
-    SetArduino(0, 0, 90);
-
+    SetArduino(200,255,110);
+    mpu6050.update();
+    while(angle >= -180)
+    {
+      mpu6050.update();
+      angle = mpu6050.getAngleZ();
+      Serial.println(angle);
+    }
+    SetArduino(0,0,90);
+    // finish turning
     rightSpeed = leftSpeed = -100;
     SetArduino(rightSpeed, leftSpeed, servoAngle);//drive backward
     distance = 200;
@@ -139,10 +149,16 @@ void loop()
     delay(5000);
 
     // Turn 90 degrees clockwise
-    SetArduino(150, 200, 110);
-    delay(2000);
-    SetArduino(0, 0, 90);
-    // This is the only way to do it unless you have an MPU 9500 or a magnetometer
+    SetArduino(200,255,110);
+    mpu6050.update();
+    while(angle >= -270)
+    {
+      mpu6050.update();
+      angle = mpu6050.getAngleZ();
+      Serial.println(angle);
+    }
+    SetArduino(0,0,90);
+    // Stop Turning
 
     // THEN:
     EndingA();
