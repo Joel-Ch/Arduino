@@ -1,0 +1,9 @@
+Hostname: pi/C11Chipotle
+User: pi
+Display Name: C11Chipotle
+Password: 00000000
+
+SSID: C11Chip
+Passkey: 00000000
+IP: 192.168.137.253 192.168.2.1
+    192.168.137.166 192.168.2.1

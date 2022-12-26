@@ -1,12 +1,15 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <Wire.h>
-#include <Arduino.h>
 #include "ArduinoComms.h"
 #include <MPU6050_tockn.h>
+#include <Arduino.h>
+
 
 #define TRIGGER_PIN 32
 #define ECHO_PIN 33
+
+#define DIAMETER 5
 
 MPU6050 mpu6050(Wire);
 
@@ -22,19 +25,24 @@ float CalculateDistance()
     long duration = pulseIn(ECHO_PIN, HIGH);
     // Calculate the distance
     float distance = duration * 0.034 / 2;
-    Serial.print(distance);
     delay(500);
 
     return distance;
 }
 
+// MATHS:
+// 1 rotation = 16 encoder counts = PI*Diameter
+// hence 1 encoder count = PI*Diameter/16
+// encoder*(16/PI) = 1 Diameter
+// encoder*(16/(PI*Diameter(cm))) = Distance(cm)
+
 // Replace the next variables with your SSID/Password combination
-const char *ssid = "REPLACE_WITH_YOUR_SSID";
-const char *password = "REPLACE_WITH_YOUR_PASSWORD";
+const char *ssid = "C11Chip";
+const char *password = "00000000";
 
 // Add your MQTT Broker IP address, example:
 // const char* mqtt_server = "192.168.1.144";
-const char *mqtt_server = "YOUR_MQTT_BROKER_IP_ADDRESS";
+const char *mqtt_server = "192.168.137.166";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -44,7 +52,7 @@ int value = 0;
 
 float distance = 0;
 
-int rightSpeed = 0, leftSpeed = 0, servoAngle = 90;
+int rightSpeed = 0, leftSpeed = 0, servoAngle = 90, rightEncoder, leftEncoder;
 
 void setup()
 {
@@ -97,16 +105,12 @@ void callback(char *topic, byte *message, unsigned int length)
     }
     Serial.println();
 
-    // Feel free to add more if statements to control more GPIOs with MQTT
-
-    // If a message is received on the topic esp32/output, you check if the message is either "on" or "off".
-    // Changes the output state according to the message
-    if (String(topic) == "esp32/output")
+    if (String(topic) == "Joel/driving")
     {
         Serial.print("Changing output to ");
-        if (messageTemp == "forward")
+        if (messageTemp == "on")
         {
-            Serial.println("forward");
+            Serial.println("on");
             rightSpeed = leftSpeed = 255;
         }
         else if (messageTemp == "off")
@@ -114,28 +118,28 @@ void callback(char *topic, byte *message, unsigned int length)
             Serial.println("off");
             rightSpeed = leftSpeed = 0;
         }
-        else if (messageTemp == "right")
-        {
-            Serial.println("right");
-            servoAngle = 120;
-        }
-        else if (messageTemp == "left")
-        {
-            Serial.println("left");
-            servoAngle = 60;
-        }
-        else if (messageTemp == "straight")
-        {
-            Serial.println("straight");
-            servoAngle = 90;
-        }
-        else if (messageTemp == "backward")
-        {
-            Serial.println("backward");
-            rightSpeed = leftSpeed = -255;
-        }
-        SetArduino(rightSpeed, leftSpeed, servoAngle);
+        
     }
+    else if (String(topic) == "Joel/steering")
+    {
+      Serial.print("Now steering ");
+      if (messageTemp == "left")
+      {
+        Serial.println("left");
+        servoAngle = 70;
+      }
+      else if (messageTemp == "right")
+      {
+        Serial.println("right");
+        servoAngle = 110;
+      }
+      else if (messageTemp == "straight")
+      {
+        Serial.println("straight");
+        servoAngle = 90;
+      }
+    }
+    SetArduino(rightSpeed, leftSpeed, servoAngle);
 }
 
 void reconnect()
@@ -145,11 +149,13 @@ void reconnect()
     {
         Serial.print("Attempting MQTT connection...");
         // Attempt to connect
-        if (client.connect("ESP8266Client"))
+        if (client.connect("JoelEEEBotClient"))
         {
             Serial.println("connected");
             // Subscribe
-            client.subscribe("esp32/output");
+            client.subscribe("Joel/driving");
+
+            client.subscribe("Joel/steering");
         }
         else
         {
@@ -170,28 +176,28 @@ void loop()
     client.loop();
 
     long now = millis();
-    if (now - lastMsg > 5000)
+    if (now - lastMsg > 50)
     {
         lastMsg = now;
 
-        distance = CalculateDistance();
         mpu6050.update();
+        distance = CalculateDistance();
 
         // Convert the value to a char array
         char distString[8];
         dtostrf(distance, 1, 2, distString);
-        Serial.print("Distance: ");
+        Serial.print("  Distance: ");
         Serial.println(distString);
-        client.publish("esp32/distance", distString);
+        client.publish("Joel/distance", distString);
 
         float angleX = mpu6050.getAngleX();
 
         // Convert the value to a char array
         char XString[8];
         dtostrf(angleX, 1, 2, XString);
-        Serial.print("X: ");
+        Serial.print("  X: ");
         Serial.print(XString);
-        client.publish("esp32/X", XString);
+        client.publish("Joel/X", XString);
 
         float angleY = mpu6050.getAngleY();
 
@@ -200,7 +206,7 @@ void loop()
         dtostrf(angleY, 1, 2, YString);
         Serial.print("  Y: ");
         Serial.print(YString);
-        client.publish("esp32/Y", YString);
+        client.publish("Joel/Y", YString);
 
         float angleZ = mpu6050.getAngleZ();
 
@@ -208,7 +214,50 @@ void loop()
         char ZString[8];
         dtostrf(angleZ, 1, 2, ZString);
         Serial.print("  Z: ");
-        Serial.print(ZString);
-        client.publish("esp32/Z", ZString);
+        Serial.println(ZString);
+        client.publish("Joel/Z", ZString);
+
+        ReadEncoders(&rightEncoder, &leftEncoder);
+
+        // Convert the value to a char array
+        char RString[8];
+        dtostrf(rightEncoder, 1, 2, RString);
+        Serial.print("  Right: ");
+        Serial.println(RString);
+        client.publish("Joel/rightEncoder", RString);
+
+        int rightDistance = rightEncoder*(16/(PI*DIAMETER));
+
+        // Convert the value to a char array
+        char RDString[8];
+        dtostrf(rightDistance, 1, 2, RDString);
+        Serial.print("  Right Distance: ");
+        Serial.println(RDString);
+        client.publish("Joel/rightDistance", RDString);
+
+        // Convert the value to a char array
+        char LString[8];
+        dtostrf(leftEncoder, 1, 2, LString);
+        Serial.print("  Left: ");
+        Serial.println(LString);
+        client.publish("Joel/leftEncoder", LString);
+        
+        int leftDistance = leftEncoder*(16/(PI*DIAMETER));
+
+        // Convert the value to a char array
+        char LDString[8];
+        dtostrf(leftDistance, 1, 2, LDString);
+        Serial.print("  Left Distance: ");
+        Serial.println(LDString);
+        client.publish("Joel/leftDistance", LDString);
+
+        float Temp = mpu6050.getTemp();
+
+        // Convert the value to a char array
+        char tempString[8];
+        dtostrf(Temp, 1, 2, tempString);
+        Serial.print("  Temperature: ");
+        Serial.println(tempString);
+        client.publish("Joel/temperature", tempString);
     }
 }

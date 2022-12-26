@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <Wire.h>
 
 #define I2C_ARDUINO_ADDR 4
