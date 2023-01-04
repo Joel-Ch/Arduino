@@ -10,6 +10,7 @@
 Encoder myEnc(2, 11); //enable pins with interrupt capability
 Encoder myEnc2(3, 12); //enable pins with interrupt capability
 
+float x;
 long oldPosition  = -999, oldPosition2 = -999;
 float distance, distance2;
 
@@ -28,10 +29,8 @@ void loop()
   if (newPosition != oldPosition) 
   {
     oldPosition = newPosition;
-    
-  // edit the code below to calculate the distance moved, +1 increment = (diameter*pi)/encoder count per revolution
-    distance = newPosition * 1.0;
-  // ***
+
+    distance = newPosition * x;
     
     // output distance to the serial monitor                    
     Serial.print("Distance(m): ");
