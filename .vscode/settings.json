@@ -1,0 +1,5 @@
+{
+    "arduino.enableUSBDetection": false,
+    "arduino.additionalUrls": "C:/Sr/Sketch/hardware/espressif/esp32/package/package_esp32_index.template.json",
+
+}
