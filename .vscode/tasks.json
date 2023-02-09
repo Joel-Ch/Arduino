@@ -3,7 +3,7 @@
         {
             "type": "cppbuild",
             "label": "C/C++: gcc.exe build active file",
-            "command": "C:\\Users\\poely\\Downloads\\x64-4.8.1-release-posix-seh-rev5\\mingw64\\bin\\gcc.exe",
+            "command": "C:/OpenCV Task/CodeBlocks-17.12/MinGW/bin/mingw32-gcc.exe",
             "args": [
                 "-g",
                 "${file}",
@@ -12,21 +12,49 @@
                 "-I",
                 "C:/OpenCV/opencv/build/include",
                 "-L",
-                "C:/OpenCV/opencv/build/x64/vc15/bin",
-                "-llibopencv_calib3d411",
-                "-llibopencv_core411",
-                "-llibopencv_dnn411",
-                "-llibopencv_features2d411",
-                "-llibopencv_flann411",
-                "-llibopencv_highgui411",
-                "-llibopencv_imgcodecs411",
-                "-llibopencv_imgproc411",
-                "-llibopencv_ml411",
-                "-llibopencv_objdetect411",
-                "-llibopencv_photo411",
-                "-llibopencv_stitching411",
-                "-llibopencv_video411",
-                "-llibopencv_videoio411"
+                "C:/OpenCV Task/OpenCVLibrary/lib",
+                    "-llibopencv_aruco331.dll.a"
+                    ,"-llibopencv_bgsegm331.dll.a"
+                    ,"-llibopencv_bioinspired331.dll.a"
+                    ,"-llibopencv_calib3d331.dll.a"
+                    ,"-llibopencv_ccalib331.dll.a"
+                    ,"-llibopencv_core331.dll.a"
+                    ,"-llibopencv_datasets331.dll.a"
+                    ,"-llibopencv_dnn331.dll.a"
+                    ,"-llibopencv_dpm331.dll.a"
+                    ,"-llibopencv_face331.dll.a"
+                    ,"-llibopencv_features2d331.dll.a"
+                    ,"-llibopencv_flann331.dll.a"
+                    ,"-llibopencv_fuzzy331.dll.a"
+                    ,"-llibopencv_highgui331.dll.a"
+                    ,"-llibopencv_img_hash331.dll.a"
+                    ,"-llibopencv_imgcodecs331.dll.a"
+                    ,"-llibopencv_imgproc331.dll.a"
+                    ,"-llibopencv_line_descriptor331.dll.a"
+                    ,"-llibopencv_ml331.dll.a"
+                    ,"-llibopencv_objdetect331.dll.a"
+                    ,"-llibopencv_optflow331.dll.a"
+                    ,"-llibopencv_phase_unwrapping331.dll.a"
+                    ,"-llibopencv_photo331.dll.a"
+                    ,"-llibopencv_plot331.dll.a"
+                    ,"-llibopencv_reg331.dll.a"
+                    ,"-llibopencv_rgbd331.dll.a"
+                    ,"-llibopencv_saliency331.dll.a"
+                    ,"-llibopencv_shape331.dll.a"
+                    ,"-llibopencv_stereo331.dll.a"
+                    ,"-llibopencv_stitching331.dll.a"
+                    ,"-llibopencv_structured_light331.dll.a"
+                    ,"-llibopencv_superres331.dll.a"
+                    ,"-llibopencv_surface_matching331.dll.a"
+                    ,"-llibopencv_text331.dll.a"
+                    ,"-llibopencv_tracking331.dll.a"
+                    ,"-llibopencv_video331.dll.a"
+                    ,"-llibopencv_videoio331.dll.a"
+                    ,"-llibopencv_videostab331.dll.a"
+                    ,"-llibopencv_xfeatures2d331.dll.a"
+                    ,"-llibopencv_ximgproc331.dll.a"
+                    ,"-llibopencv_xobjdetect331.dll.a"
+                    ,"-llibopencv_xphoto331.dll.a"
             ],
             "options": {
                 "cwd": "${fileDirname}"
