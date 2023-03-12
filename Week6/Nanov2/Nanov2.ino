@@ -61,7 +61,7 @@ void loop() {
   }
 }
 
-// this function executes when data is requested from the master device
+// this function executes when data is requested by the master device
 /*void requestEvent(void) {
   Wire.write(oldPos_enc1);
   Wire.write(oldPos_enc2);
