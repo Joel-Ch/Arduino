@@ -1,3 +1,5 @@
+//turning left 35 x and y (ie drives 35cm forwards and 35cm left while turning left)
+//turning right 53 x and y (ditto but 53cm)
 
 #include <Keypad.h>
 #include "RunMotors.h"
@@ -9,10 +11,10 @@
 #define inputLength 30
 
 char alpha;
-const int rs = 19, en = 23, d4 = 18, d5 = 17, d6 = 16, d7 = 15;
+byte rs = 19, en = 23, d4 = 18, d5 = 17, d6 = 16, d7 = 15;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 int instructions[inputLength], i = 0;
-String distance[inputLength];
+String distance[inputLength];//array of strings
 String message;
 
 byte smiley[8] = {
@@ -95,17 +97,14 @@ void setup()
 void loop()
 {
   // // 2 - Forward, 4 - Left, 8 - Backwards, 6 - Right
-  // // Other features wanted:
-  // // . Undo, *
-  // // . Go button/confirm, 5
-  // // . Reset whole thing , #
+  // // . Go button/confirm, #
   // // . 1, 3, 7, 9 and 0 are novelty buttons.
 
   // // --------------------------------------------------------------- Directions ----------------------------------------------------------------------------------------
   lcd.setCursor(0, 0);
   // lcd.clear();
 
-  do
+  while (alpha != '#')
   {
     lcd.clear();
     lcd.print("   Welcome!");
@@ -122,14 +121,11 @@ void loop()
     lcd.write(byte(4));
 
     alpha = customKeypad.waitForKey();
-  } while (alpha != '#');
-  // store all of the inputs into an array, confirm with the user and then execute the commands one by one.
-
-  // Prompt for input and give them the choice to exit selection and begin movement
+  }
   lcd.clear();
   lcd.print("2|4|6|8 Movement");
   lcd.setCursor(0, 1);
-  lcd.print("✓:# X:*"); // while loop is exited through pressing 5 and now we are given movement key
+  lcd.print("Y:# N:*");
 
   i = 0;
   char enteredValue = customKeypad.waitForKey();
@@ -140,11 +136,6 @@ void loop()
     lcd.setCursor(2, 0);
     lcd.print("{Directions}");
     lcd.setCursor(0, 1);
-    Serial.print("i = "); // Using for troubleshooting
-    Serial.print(i);
-    Serial.print("\t");
-    Serial.print("Value in Array = "); // Using for troubleshooting
-    Serial.println(instructions[i]);
     if (enteredValue == '2')
     {
       message = message + "F";
@@ -162,52 +153,57 @@ void loop()
         if (input == '*')
         {
           if (distance[i].length() != 0)
-            distance[i].remove(distance[i].length()-1,1);
+            distance[i].remove(distance[i].length()-1,1);//if the string has >= 1 item in it, remove the last item
         }
         else
 
           distance[i] += input;
       } while (input != '#');
-      distance[i].remove(distance[i].length()-1,1);
-      message += distance[i];
+      distance[i].remove(distance[i].length()-1,1);//remove the # from the string
+      message += distance[i];//add the distance to the message
       lcd.clear();
-      Serial.print(distance[i]);
+      Serial.print(distance[i]);//print the distance to the serial monitor
       i++;
     }
     else if (enteredValue == '4')
-    {
+    {//left
       message = message + "L";
       instructions[i] = 4;
       i++;
     }
     else if (enteredValue == '6')
-    {
+    {//right
       message = message + "R";
       instructions[i] = 6;
       i++;
     }
     else if (enteredValue == '8')
-    {
+    {//backwards
       message = message + "B";
       instructions[i] = 8;
       i++;
     }
     else if (enteredValue == '*')
-    {
+    {//delete
       i--;
       while (isdigit(message.charAt(message.length()-1)))
-      {
+      {//if the last character is a digit, remove it
         message.remove(message.length()-1,1);
       }
       
-      message.remove(message.length()-1,1);
-      instructions[i] = 0;
+      message.remove(message.length()-1,1);//remove the last character
+      instructions[i] = 0;//reset the instruction
       distance[i] = "";
     }
     lcd.setCursor(2, 0);
     lcd.print("{Directions}");
     lcd.setCursor(0,1);
     lcd.print(message);
+    Serial.print("i = "); // Using for troubleshooting
+    Serial.print(i);
+    Serial.print("\t");
+    Serial.print("Value in Array = ");
+    Serial.println(instructions[i]);
 
     enteredValue = customKeypad.waitForKey();
   }
@@ -234,60 +230,95 @@ void loop()
   char confirm = customKeypad.waitForKey();
   while (confirm != '#' && confirm != '*')
   {
-    confirm = customKeypad.waitForKey();
+    confirm = customKeypad.waitForKey();//ensure input is either # or *
   }
   if (confirm == '#')
   {
     Serial.println("Confirmed!");
     lcd.clear();
     lcd.print(" Don't Touch!");
-    lcd.setCursor(0, 1);
-    lcd.print("(ง'̀-'́)ง");
     for (i = 0; i <= inputLength; i++)
     {
-
+      lcd.clear();
+      lcd.print(" Don't Touch!");
+      lcd.setCursor(0,1);
+      lcd.print(i+1);//print the current instruction number(starting at 1 not 0)
       if (instructions[i] == 2)
       {                           // Forwards
-        RunMotors(-130, 130, 92); // Assuming 90 degrees is centered for the vehicle.
+        lcd.setCursor(4, 1);
+        lcd.print("F");//pint instruction on screen
+        lcd.setCursor(6, 1);
+        lcd.print(distance[i]);
+        RunMotors(-130, 130, 92); // the minus is required because will connected his left motor backwards.
         for(int j = 0; j < distance[i].toInt(); j++)
         {
           Serial.println(j);
-          delay(370);
+          delay(37);//takes 37ms to move 1cm
         }
         StopMotors();
       }
 
       else if (instructions[i] == 4)
       { // Left
+        lcd.setCursor(4, 1);
+        lcd.print("L");
         RunMotors(-120, 140, 62);
         ReturnAngleTurned(165);
       }
 
       else if (instructions[i] == 6)
       { // Right
+        lcd.setCursor(4, 1);
+        lcd.print("R");
         RunMotors(-140, 120, 122);
         ReturnAngleTurned(178);
       }
 
       else if (instructions[i] == 8)
       {
-        RunMotors(130, -130, 92); // Assuming 90 degrees is centered for the vehicle.
-        delay(370);
+        lcd.setCursor(4, 1);
+        lcd.print("B");
+        RunMotors(130, -130, 92);
+        delay(370);//goes back 10cm by default
         StopMotors();
       }
     }
     lcd.clear();
     lcd.print("  Task Complete!");
     lcd.setCursor(8, 1);
-    lcd.write(byte(0));
-    delay(4000);
+    lcd.write(byte(0));//heart
+    delay(3000);
   }
 
   lcd.clear();
   lcd.print("   Resetting...");
-  lcd.setCursor(0, 1);
-  lcd.print("  ¯|_(ツ)_/¯");
-  delay(3000);
+  lcd.setCursor(7, 1);//cool little animation:
+  lcd.print("|");
+  delay(200);
+  lcd.setCursor(7, 1);
+  lcd.print('/');
+  delay(200);
+  lcd.setCursor(7, 1);
+  lcd.print('-');
+  delay(200);
+  lcd.setCursor(7, 1);
+  lcd.print('\\');
+  delay(200);
+  lcd.setCursor(7, 1);
+  lcd.print('|');
+  delay(200);
+  lcd.setCursor(7, 1);
+  lcd.print('/');
+  delay(200);
+  lcd.setCursor(7, 1);
+  lcd.print('-');
+  delay(200);
+  lcd.setCursor(7, 1);
+  lcd.print('\\');
+  delay(200);
+  lcd.setCursor(7, 1);
+  lcd.print('|');
+  //lcd.print("  ¯|_(ツ)_/¯");
 
   for (i = 0; i < inputLength; i++)
   {
@@ -295,7 +326,7 @@ void loop()
     Serial.print(" : ");
     Serial.print(instructions[i]);
     Serial.print(" : ");
-    Serial.println(distance[i]);
+    Serial.println(distance[i]);//print out inputs for debugging, then clear them
     instructions[i] = 0;
     distance[i] = "";
   }
