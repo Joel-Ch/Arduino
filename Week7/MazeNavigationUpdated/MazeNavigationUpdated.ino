@@ -1,9 +1,21 @@
 //turning left 35 x and y (ie drives 35cm forwards and 35cm left while turning left)
 //turning right 53 x and y (ditto but 53cm)
+/*
+trial maze actual measurements:
+F 220  ->  170
+R
+F 130 -> 50
+L
+F 60 -> -20
+R
+F X 
 
+
+*/
 #include <Keypad.h>
 #include "RunMotors.h"
 #include "ReturnAngleTurned.h"
+#include "ReturnDistanceTravelled.h"
 #include <string>
 #include <LiquidCrystal.h>
 #include <cctype>
@@ -199,23 +211,23 @@ void loop()
     lcd.print("{Directions}");
     lcd.setCursor(0,1);
     lcd.print(message);
-    Serial.print("i = "); // Using for troubleshooting
-    Serial.print(i);
-    Serial.print("\t");
-    Serial.print("Value in Array = ");
-    Serial.println(instructions[i]);
+    // Serial.print("i = "); // Using for troubleshooting
+    // Serial.print(i);
+    // Serial.print("\t");
+    // Serial.print("Value in Array = ");
+    // Serial.println(instructions[i]);
 
     enteredValue = customKeypad.waitForKey();
   }
 
   //inputs are in! time for execution
-  for (i = 0; i < inputLength; i++)
-  {
-    Serial.print("Position ");
-    Serial.print(i);
-    Serial.print(" : ");
-    Serial.println(instructions[i]);
-  }
+  // for (i = 0; i < inputLength; i++)
+  // {
+  //   Serial.print("Position ");
+  //   Serial.print(i);
+  //   Serial.print(" : ");
+  //   Serial.println(instructions[i]);
+  // }
 
   lcd.clear();
   lcd.print("     Happy?");
@@ -232,6 +244,7 @@ void loop()
   {
     confirm = customKeypad.waitForKey();//ensure input is either # or *
   }
+  
   if (confirm == '#')
   {
     Serial.println("Confirmed!");
@@ -239,48 +252,51 @@ void loop()
     lcd.print(" Don't Touch!");
     for (i = 0; i <= inputLength; i++)
     {
+      StopMotors();
       lcd.clear();
       lcd.print(" Don't Touch!");
       lcd.setCursor(0,1);
       lcd.print(i+1);//print the current instruction number(starting at 1 not 0)
-      if (instructions[i] == 2)
-      {                           // Forwards
+      switch (instructions[i])
+      {
+      case 2://forwards
         lcd.setCursor(4, 1);
-        lcd.print("F");//pint instruction on screen
+        lcd.print("F"); // print instruction on screen
         lcd.setCursor(6, 1);
         lcd.print(distance[i]);
-        RunMotors(-130, 130, 92); // the minus is required because will connected his left motor backwards.
-        for(int j = 0; j < distance[i].toInt(); j++)
-        {
-          Serial.println(j);
-          delay(37);//takes 37ms to move 1cm
-        }
+        RunMotors(130, 130, 92); // the minus is required because will connected his left motor backwards.
+        DriveDistance(distance[i].toInt());
         StopMotors();
-      }
 
-      else if (instructions[i] == 4)
-      { // Left
+        // for(int j = 0; j < distance[i].toInt(); j++)
+        // {
+        //   Serial.println(j);
+        //   delay(30);//takes xxms to move 1cm
+        // }
+        break;
+      case 4://left
         lcd.setCursor(4, 1);
         lcd.print("L");
-        RunMotors(-120, 140, 62);
+        RunMotors(120, 140, 62);
         ReturnAngleTurned(165);
-      }
-
-      else if (instructions[i] == 6)
-      { // Right
+        break;
+      case 6://right
         lcd.setCursor(4, 1);
         lcd.print("R");
-        RunMotors(-140, 120, 122);
+        RunMotors(140, 120, 122);
         ReturnAngleTurned(178);
-      }
-
-      else if (instructions[i] == 8)
-      {
+        break;
+      case 8:
         lcd.setCursor(4, 1);
         lcd.print("B");
-        RunMotors(130, -130, 92);
-        delay(370);//goes back 10cm by default
+        RunMotors(-130, -130, 92);
+        delay(370); // goes back 10cm by default
         StopMotors();
+        break;
+      
+      default:
+        Serial.print("Error!");
+        break;
       }
     }
     lcd.clear();
@@ -322,11 +338,11 @@ void loop()
 
   for (i = 0; i < inputLength; i++)
   {
-    Serial.print(i);
-    Serial.print(" : ");
-    Serial.print(instructions[i]);
-    Serial.print(" : ");
-    Serial.println(distance[i]);//print out inputs for debugging, then clear them
+    // Serial.print(i);
+    // Serial.print(" : ");
+    // Serial.print(instructions[i]);
+    // Serial.print(" : ");
+    // Serial.println(distance[i]);//print out inputs for debugging, then clear them
     instructions[i] = 0;
     distance[i] = "";
   }
