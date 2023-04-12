@@ -168,7 +168,6 @@ void loop()
             distance[i].remove(distance[i].length()-1,1);//if the string has >= 1 item in it, remove the last item
         }
         else
-
           distance[i] += input;
       } while (input != '#');
       distance[i].remove(distance[i].length()-1,1);//remove the # from the string

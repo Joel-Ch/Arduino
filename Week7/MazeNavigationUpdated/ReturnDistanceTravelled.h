@@ -28,17 +28,11 @@ void DriveDistance(int distance)
         Serial.println(leftPos);
 
         if (rightPos > leftPos)
-        {
             RunMotors(140, 130, 97);
-        }
         else if (rightPos < leftPos)
-        {
             RunMotors(130, 140, 87);
-        }
         else
-        {
             RunMotors(140, 140, 92);
-        }
         Distance = (rightPos + leftPos) / 2;
         // This will let me see how the mpu is behaving and what the current value is, see if rotation is in the deisred direction or not.
     }while (Distance < distance*distanceVariable);
