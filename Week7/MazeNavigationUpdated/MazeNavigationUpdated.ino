@@ -20,6 +20,7 @@ F X
 #include <LiquidCrystal.h>
 #include <cctype>
 
+// #define TURNONSPOT
 #define inputLength 30
 
 char alpha;
@@ -263,9 +264,8 @@ void loop()
         lcd.print("F"); // print instruction on screen
         lcd.setCursor(6, 1);
         lcd.print(distance[i]);
-        RunMotors(130, 130, 92); // the minus is required because will connected his left motor backwards.
+        RunMotors(130, 130, 92);
         DriveDistance(distance[i].toInt());
-        StopMotors();
 
         // for(int j = 0; j < distance[i].toInt(); j++)
         // {
@@ -276,14 +276,30 @@ void loop()
       case 4://left
         lcd.setCursor(4, 1);
         lcd.print("L");
+        #ifdef TURNONSPOT
+        RunMotors(-130, -130, 92);
+        DriveDistance(35);
+        #endif
         RunMotors(120, 140, 62);
         ReturnAngleTurned(165);
+        #ifdef TURNONSPOT
+        RunMotors(-130, -130, 92);
+        DriveDistance(35);
+        #endif
         break;
       case 6://right
         lcd.setCursor(4, 1);
         lcd.print("R");
+        #ifdef TURNONSPOT
+        RunMotors(-130, -130, 92);
+        DriveDistance(53);
+        #endif
         RunMotors(140, 120, 122);
         ReturnAngleTurned(178);
+        #ifdef TURNONSPOT
+        RunMotors(-130, -130, 92);
+        DriveDistance(53);
+        #endif
         break;
       case 8:
         lcd.setCursor(4, 1);
