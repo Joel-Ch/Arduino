@@ -153,8 +153,6 @@ void loop()
     {
       message = message + "F";
       instructions[i] = 2;
-      
-      char input='0';
       do 
       {
         lcd.clear();
