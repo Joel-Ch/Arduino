@@ -20,8 +20,8 @@
 // #include <LiquidCrystal.h>
 // #include <cctype>
 
-// #define inputLength 30
-// // #define TURNONSPOT
+// #define TURNONSPOT
+#define inputLength 30
 
 // char alpha;
 // byte rs = 19, en = 23, d4 = 18, d5 = 17, d6 = 16, d7 = 15;
@@ -143,65 +143,63 @@
 //   i = 0;
 //   char enteredValue = customKeypad.waitForKey();
 
-//   while (enteredValue != '#')
-//   { // until we choose to continue we will assign movement to the arrray elements
-//     lcd.clear();
-//     lcd.setCursor(2, 0);
-//     lcd.print("{Directions}");
-//     lcd.setCursor(0, 1);
-//     if (enteredValue == '2')
-//     {
-//       message = message + "F";
-//       instructions[i] = 2;
-      
-//       char input='0';
-//       do 
-//       {
-//         lcd.clear();
-//         lcd.setCursor(0, 0);
-//         lcd.print("Enter Distance:");
-//         lcd.setCursor(0, 1);
-//         lcd.print(distance[i]);
-//         input = customKeypad.waitForKey();
-//         if (input == '*')
-//         {
-//           if (distance[i].length() != 0)
-//             distance[i].remove(distance[i].length()-1,1);//if the string has >= 1 item in it, remove the last item
-//         }
-//         else
-//           distance[i] += input;
-//       } while (input != '#');
-//       distance[i].remove(distance[i].length()-1,1);//remove the # from the string
-//       message += distance[i];//add the distance to the message
-//       lcd.clear();
-//       Serial.print(distance[i]);//print the distance to the serial monitor
-//       i++;
-//     }
-//     else if (enteredValue == '4')
-//     {//left
-//       message = message + "L";
-//       instructions[i] = 4;
-//       i++;
-//     }
-//     else if (enteredValue == '6')
-//     {//right
-//       message = message + "R";
-//       instructions[i] = 6;
-//       i++;
-//     }
-//     else if (enteredValue == '8')
-//     {//backwards
-//       message = message + "B";
-//       instructions[i] = 8;
-//       i++;
-//     }
-//     else if (enteredValue == '*')
-//     {//delete
-//       i--;
-//       while (isdigit(message.charAt(message.length()-1)))
-//       {//if the last character is a digit, remove it
-//         message.remove(message.length()-1,1);
-//       }
+  while (enteredValue != '#')
+  { // until we choose to continue we will assign movement to the arrray elements
+    lcd.clear();
+    lcd.setCursor(2, 0);
+    lcd.print("{Directions}");
+    lcd.setCursor(0, 1);
+    if (enteredValue == '2')
+    {
+      message = message + "F";
+      instructions[i] = 2;
+      do 
+      {
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("Enter Distance:");
+        lcd.setCursor(0, 1);
+        lcd.print(distance[i]);
+        input = customKeypad.waitForKey();
+        if (input == '*')
+        {
+          if (distance[i].length() != 0)
+            distance[i].remove(distance[i].length()-1,1);//if the string has >= 1 item in it, remove the last item
+        }
+        else
+          distance[i] += input;
+      } while (input != '#');
+      distance[i].remove(distance[i].length()-1,1);//remove the # from the string
+      message += distance[i];//add the distance to the message
+      lcd.clear();
+      Serial.print(distance[i]);//print the distance to the serial monitor
+      i++;
+    }
+    else if (enteredValue == '4')
+    {//left
+      message = message + "L";
+      instructions[i] = 4;
+      i++;
+    }
+    else if (enteredValue == '6')
+    {//right
+      message = message + "R";
+      instructions[i] = 6;
+      i++;
+    }
+    else if (enteredValue == '8')
+    {//backwards
+      message = message + "B";
+      instructions[i] = 8;
+      i++;
+    }
+    else if (enteredValue == '*')
+    {//delete
+      i--;
+      while (isdigit(message.charAt(message.length()-1)))
+      {//if the last character is a digit, remove it
+        message.remove(message.length()-1,1);
+      }
       
 //       message.remove(message.length()-1,1);//remove the last character
 //       instructions[i] = 0;//reset the instruction
@@ -247,59 +245,69 @@
 //     confirm = customKeypad.waitForKey();//ensure input is either # or *
 //   }
   
-//   if (confirm == '#')
-//   {
-//     Serial.println("Confirmed!");
-//     lcd.clear();
-//     lcd.print(" Don't Touch!");
-//     while instructions[i] != 1
-//     {
-//       lcd.clear();
-//       lcd.print(" Don't Touch!");
-//       lcd.setCursor(0,1);
-//       lcd.print(i+1);//print the current instruction number(starting at 1 not 0)
-//       switch (instructions[i])
-//       {
-//       case 2://forwards
-//         lcd.setCursor(4, 1);
-//         lcd.print("F"); // print instruction on screen
-//         lcd.setCursor(6, 1);
-//         lcd.print(distance[i]);
-//         Serial.print("Forwards?");
-//         DriveDistance(distance[i].toInt(),1);
-//         break;
-//       case 4://left
-//         lcd.setCursor(4, 1);
-//         lcd.print("L");
-//         #ifdef TURNONSPOT
-//         DriveDistance(35, 0);
-//         #endif
-//         TurnAngle(0);
-//         #ifdef TURNONSPOT
-//         DriveDistance(35, 0);
-//         #endif
-//         break;
-//       case 6://right
-//         lcd.setCursor(4, 1);
-//         lcd.print("R");
-//         #ifdef TURNONSPOT
-//         DriveDistance(53,0);
-//         #endif
-//         TurnAngle();
-//         #ifdef TURNONSPOT
-//         DriveDistance(53,0);
-//         #endif
-//         break;
-//       case 8:
-//         lcd.setCursor(4, 1);
-//         lcd.print("B");
-//         Serial.print("Backwards?");
-//         DriveDistance(20, 0);
-//         Serial.print("Backwar");
-//         // RunMotors(-130, -130, 92);
-//         // delay(370); // goes back 10cm by default
-//         // StopMotors();
-//         break;
+  if (confirm == '#')
+  {
+    Serial.println("Confirmed!");
+    lcd.clear();
+    lcd.print(" Don't Touch!");
+    for (i = 0; i <= inputLength; i++)
+    {
+      StopMotors();
+      lcd.clear();
+      lcd.print(" Don't Touch!");
+      lcd.setCursor(0,1);
+      lcd.print(i+1);//print the current instruction number(starting at 1 not 0)
+      switch (instructions[i])
+      {
+      case 2://forwards
+        lcd.setCursor(4, 1);
+        lcd.print("F"); // print instruction on screen
+        lcd.setCursor(6, 1);
+        lcd.print(distance[i]);
+        RunMotors(130, 130, 92);
+        DriveDistance(distance[i].toInt());
+
+        // for(int j = 0; j < distance[i].toInt(); j++)
+        // {
+        //   Serial.println(j);
+        //   delay(30);//takes xxms to move 1cm
+        // }
+        break;
+      case 4://left
+        lcd.setCursor(4, 1);
+        lcd.print("L");
+        #ifdef TURNONSPOT
+        RunMotors(-130, -130, 92);
+        DriveDistance(35);
+        #endif
+        RunMotors(120, 140, 62);
+        ReturnAngleTurned(165);
+        #ifdef TURNONSPOT
+        RunMotors(-130, -130, 92);
+        DriveDistance(35);
+        #endif
+        break;
+      case 6://right
+        lcd.setCursor(4, 1);
+        lcd.print("R");
+        #ifdef TURNONSPOT
+        RunMotors(-130, -130, 92);
+        DriveDistance(53);
+        #endif
+        RunMotors(140, 120, 122);
+        ReturnAngleTurned(178);
+        #ifdef TURNONSPOT
+        RunMotors(-130, -130, 92);
+        DriveDistance(53);
+        #endif
+        break;
+      case 8:
+        lcd.setCursor(4, 1);
+        lcd.print("B");
+        RunMotors(-130, -130, 92);
+        delay(370); // goes back 10cm by default
+        StopMotors();
+        break;
       
 //       default:
 //         Serial.print("Error!");

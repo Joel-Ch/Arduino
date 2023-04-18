@@ -53,5 +53,7 @@ void DriveDistance(int distance, int driveForward)
     }while (Distance < distance*distanceVariable);
     Serial.print("finished!");
 
+    StopMotors();
+
     return;
 }
