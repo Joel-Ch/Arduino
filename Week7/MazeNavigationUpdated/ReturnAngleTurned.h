@@ -1,10 +1,22 @@
 #include <MPU6050_tockn.h>
 
 MPU6050 mpu6050(Wire);
-
-void ReturnAngleTurned (int targetangle)
+//right=true,left=false
+void TurnAngle (bool right = true)
 {
-  int angleturned = 0;
+  int angleturned = 0, targetangle;
+
+  if (right)
+  {
+    Serial.print("Turning right");
+    RunMotors(140, 120, 122);
+    targetangle = 178;
+  }
+  else
+  {
+    RunMotors(120,140,62);
+    targetangle = 165;
+  }
 
   mpu6050.update();
   int startingangle = mpu6050.getAngleZ();
@@ -16,9 +28,7 @@ void ReturnAngleTurned (int targetangle)
     Serial.print("Current angle turned: ");
     Serial.println(angleturned);   
     
-         //This will let me see how the mpu is behaving and what the current value is, see if rotation is in the deisred direction or not.
   }
-  StopMotors();
   
 
 return;

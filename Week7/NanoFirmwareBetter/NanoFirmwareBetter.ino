@@ -58,13 +58,14 @@ void setup()
     // initialise serial communication
     Serial.begin(9600);
     Serial.println("Arduino Nano is Running"); // sanity check
+    
 }
 
 void loop()
 {
     // update the two encoder values
-    long enc1_count = enc1.read();
-    long enc2_count = enc2.read();
+    int enc1_count = enc1.read();
+    int enc2_count = enc2.read();
     if (enc1_count != oldPos_enc1)
     {
         oldPos_enc1 = enc1_count;
@@ -73,16 +74,23 @@ void loop()
     {
         oldPos_enc2 = enc2_count;
     }
+    while(Wire.available()>0)//clear wire buffer
+    Wire.read();
 }
 
 // this function executes when data is requested from the master device
 void requestEvent(void)
 {
+    Serial.print("Encoder Values: ");
+    Serial.print(oldPos_enc1);
+    Serial.print(" ");
+    Serial.println(oldPos_enc2);
     // send the encoder values to the master device
     Wire.write((byte)((oldPos_enc1 & 0x0000FF00) >> 8)); // first byte of x, containing bits 16 to 9
     Wire.write((byte)(oldPos_enc1 & 0x000000FF));        // second byte of x, containing the 8 LSB - bits 8 to 1
     Wire.write((byte)((oldPos_enc2 & 0x0000FF00) >> 8)); // first byte of y, containing bits 16 to 9
     Wire.write((byte)(oldPos_enc2 & 0x000000FF));        // second byte of y, containing the 8 LSB - bits 8 to 1
+    Wire.write(0x01);                                    // send a response byte to indicate that the data was sent successfully
 }
 
 // this function executes whenever data is received from the master device
@@ -90,6 +98,8 @@ void receiveEvent(int howMany)
 {
     if (howMany != 6) // for 3 16-bit numbers, the data will be 6 bytes long - anything else is an error
     {
+        Serial.print("Byte Size: ");
+        Serial.println(howMany);
         emptyBuffer();
         return;
     }
@@ -121,6 +131,9 @@ void receiveEvent(int howMany)
 
     setSteeringAngle(servoAngle);
     runMotors(leftMotor_speed, rightMotor_speed);
+
+    while(Wire.available()>0)
+    Wire.read();
 }
 
 // function to clear the I2C buffer

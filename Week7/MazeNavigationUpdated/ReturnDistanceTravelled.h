@@ -1,4 +1,5 @@
-void DriveDistance(int distance)
+//forward=true, backward=false
+void DriveDistance(int distance, int driveForward)
 {
 
     /*convert from distance to encoder ticks
@@ -13,28 +14,42 @@ void DriveDistance(int distance)
     encTick = distance * distanceVariable where distanceVariable = 1/16 x 3 x pi
 */
     register float distanceVariable = 3 * 3.141592653589793 / 16;
-    int Distance, rightInitial, leftInitial, rightPos, leftPos, rightRaw, leftRaw;
+    int Distance, rightInitial, leftInitial, rightPos, leftPos, rightRaw, leftRaw, back, oldRight, oldLeft;
 
-    ReadEncoders(&rightInitial, &leftInitial);
+    Serial.print("Initial: ");
+    ReadEncoders(&rightInitial, &leftInitial, &oldRight, &oldLeft);
+
+    Serial.print(driveForward);
+
+    if (driveForward)
+    {
+        back = 1;
+        Serial.print("Forwards!");
+    }
+    else
+    {
+        back = -1;
+        Serial.print("Backwards!");
+    }
+    RunMotors(100*back, 100*back, 92);
 
     do
     {
-        ReadEncoders(&rightRaw, &leftRaw);
-        rightPos = rightRaw - rightInitial;
-        leftPos  = leftRaw  - leftInitial;
+        ReadEncoders(&rightRaw, &leftRaw, &oldRight, &oldLeft);
+        rightPos = abs(rightRaw - rightInitial);
+        leftPos  = abs(leftRaw  - leftInitial);
         Serial.print("Right: ");
         Serial.print(rightPos);
         Serial.print("  Left: ");
         Serial.println(leftPos);
 
         if (rightPos > leftPos)
-            RunMotors(140, 130, 97);
+            RunMotors(100*back, 90*back, 97);
         else if (rightPos < leftPos)
-            RunMotors(130, 140, 87);
+            RunMotors(90*back, 100*back, 87);
         else
-            RunMotors(140, 140, 92);
+            RunMotors(100*back, 100*back, 92);
         Distance = (rightPos + leftPos) / 2;
-        // This will let me see how the mpu is behaving and what the current value is, see if rotation is in the deisred direction or not.
     }while (Distance < distance*distanceVariable);
     Serial.print("finished!");
 
