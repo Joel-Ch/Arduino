@@ -28,7 +28,7 @@ void RunMotors(int x, int y, int z)
 
 void StopMotors()
 {
-  RunMotors(0, 0, 92);
+  RunMotors(0, 0, 94);
   return;
 }
 

@@ -153,7 +153,8 @@ void loop()
     {
       message += "F";
       lcd.print(message);
-      
+      Serial.print("F: ");
+
       char input='0';
       do 
       {
@@ -162,9 +163,11 @@ void loop()
         {
           if (isdigit(message.charAt(message.length() - 1)))
             message.remove(message.length() - 1, 1);
+            Serial.print("\b");
         }
         else //if (input != '#')
         message += input;
+        Serial.print(input);
         lcd.clear();
         lcd.setCursor(2, 0);
         lcd.print("{Directions}");
@@ -172,18 +175,22 @@ void loop()
         lcd.print(message);
       } while (input != '#');
       message.remove(message.length() - 1, 1);
+      Serial.println("");
     }
     else if (enteredValue == '4')
     {//left
       message += "L";
+      Serial.println("L");
     }
     else if (enteredValue == '6')
     {//right
       message += "R";
+      Serial.println("R");
     }
     else if (enteredValue == '8')
     {//backwards
       message += "B";
+      Serial.println("B");
     }
     else if (enteredValue == '*')
     {//delete
@@ -193,6 +200,7 @@ void loop()
       }
       
       message.remove(message.length()-1,1);//remove the last character
+      Serial.println("Deleted");
     }
     lcd.setCursor(2, 0);
     lcd.print("{Directions}");
@@ -255,6 +263,7 @@ void loop()
         lcd.print("F"); // print instruction on screen
         lcd.setCursor(6, 1);
         Serial.print("Forwards?");
+        distance = 0;
         ++i;
         while (isdigit(message.charAt(i)))
         {

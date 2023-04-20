@@ -31,7 +31,7 @@ void DriveDistance(int distance, int driveForward)
         back = -1;
         Serial.print("Backwards!");
     }
-    RunMotors(100*back, 100*back, 92);
+    RunMotors(100*back, 100*back, 94);
 
     do
     {
@@ -44,11 +44,11 @@ void DriveDistance(int distance, int driveForward)
         Serial.println(leftPos);
 
         if (rightPos > leftPos)
-            RunMotors(100*back, 90*back, 97);
+            RunMotors(100*back, 90*back, 99);
         else if (rightPos < leftPos)
-            RunMotors(90*back, 100*back, 87);
+            RunMotors(90*back, 100*back, 89);
         else
-            RunMotors(100*back, 100*back, 92);
+            RunMotors(100*back, 100*back, 94);
         Distance = (rightPos + leftPos) / 2;
     }while (Distance < distance*distanceVariable);
     Serial.print("finished!");
