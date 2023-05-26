@@ -74,8 +74,7 @@ void loop()
     {
         oldPos_enc2 = enc2_count;
     }
-    while(Wire.available()>0)//clear wire buffer
-    Wire.read();
+    Serial.print(".");
 }
 
 // this function executes when data is requested from the master device

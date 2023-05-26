@@ -318,6 +318,9 @@ void loop()
     lcd.print("  Task Complete!");
     lcd.setCursor(8, 1);
     lcd.write(byte(0));//heart
+    while(Wire.available()>0)
+      Wire.read();
+    StopMotors();
     delay(3000);
   }
 

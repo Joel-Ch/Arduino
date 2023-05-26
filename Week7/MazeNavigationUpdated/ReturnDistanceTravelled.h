@@ -13,11 +13,16 @@ void DriveDistance(int distance, int driveForward)
     encTick = 1/16 x 3 x pi x distance
     encTick = distance * distanceVariable where distanceVariable = 1/16 x 3 x pi
 */
-    register float distanceVariable = 3 * 3.141592653589793 / 16;
+    register float distanceVariable = 6 * 3.141592653589793 / 16;
     int Distance, rightInitial, leftInitial, rightPos, leftPos, rightRaw, leftRaw, back, oldRight, oldLeft;
+    while(Wire.available()>0)
+    Wire.read();
 
     Serial.print("Initial: ");
     ReadEncoders(&rightInitial, &leftInitial, &oldRight, &oldLeft);
+
+    while(Wire.available()>0)
+    Wire.read();
 
     Serial.print(driveForward);
 
